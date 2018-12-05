@@ -172,6 +172,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Knox\Pesapal\PesapalServiceProvider::class,
 
     ],
 
@@ -221,6 +222,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Pesapal' => Knox\Pesapal\Facades\Pesapal::class,
 
     ],
 
