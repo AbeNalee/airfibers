@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Package;
+use App\Payment;
 use Illuminate\Http\Request;
 
-class PackagesController extends Controller
+class PaymentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +14,7 @@ class PackagesController extends Controller
      */
     public function index()
     {
-        $packs = Package::all();
-        return view('welcome')->with('packs', $packs);
+        //
     }
 
     /**
@@ -42,10 +41,10 @@ class PackagesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Package  $packages
+     * @param  \App\Payment  $payment
      * @return \Illuminate\Http\Response
      */
-    public function show(Package $packages)
+    public function show(Payment $payment)
     {
         //
     }
@@ -53,10 +52,10 @@ class PackagesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Package  $packages
+     * @param  \App\Payment  $payment
      * @return \Illuminate\Http\Response
      */
-    public function edit(Package $packages)
+    public function edit(Payment $payment)
     {
         //
     }
@@ -65,10 +64,10 @@ class PackagesController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Package  $packages
+     * @param  \App\Payment  $payment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Package $packages)
+    public function update(Request $request, Payment $payment)
     {
         //
     }
@@ -76,10 +75,10 @@ class PackagesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Package  $packages
+     * @param  \App\Payment  $payment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Package $packages)
+    public function destroy(Payment $payment)
     {
         //
     }

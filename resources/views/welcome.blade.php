@@ -4,12 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>AirFibers</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
 
         <!-- Styles -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <style>
             html, body {
                 background-color: #fff;
@@ -18,6 +19,88 @@
                 font-weight: 200;
                 height: 100vh;
                 margin: 0;
+            }
+            body {
+                padding: 1rem;
+                color: hsla(215, 5%, 50%, 1);
+            }
+            h1 {
+                color: hsla(215, 5%, 10%, 1);
+                margin-bottom: 2rem;
+            }
+            section {
+                display: flex;
+                flex-flow: row wrap;
+            }
+            section > div {
+                flex: 1;
+                padding: 0.5rem;
+            }
+            input[type="radio"] {
+                display: none;
+            &:not(:disabled) ~ label {
+                 cursor: pointer;
+             }
+            &:disabled ~ label {
+                 color: hsla(150, 5%, 75%, 1);
+                 border-color: hsla(150, 5%, 75%, 1);
+                 box-shadow: none;
+                 cursor: not-allowed;
+             }
+            }
+            label {
+                height: 100%;
+                display: block;
+                background: white;
+                border: 2px solid hsla(150, 75%, 50%, 1);
+                border-radius: 20px;
+                padding: 1rem;
+                margin-bottom: 1rem;
+            //margin: 1rem;
+                text-align: center;
+                box-shadow: 0px 3px 10px -2px hsla(150, 5%, 65%, 0.5);
+                position: relative;
+            }
+            input[type="radio"]:checked + label {
+                background: hsla(150, 75%, 50%, 1);
+                color: hsla(215, 0%, 100%, 1);
+                box-shadow: 0px 0px 20px hsla(150, 100%, 50%, 0.75);
+            &::after {
+                 color: hsla(215, 5%, 25%, 1);
+                 font-family: FontAwesome;
+                 border: 2px solid hsla(150, 75%, 45%, 1);
+                 content: "\f00c";
+                 font-size: 24px;
+                 position: absolute;
+                 top: -25px;
+                 left: 50%;
+                 transform: translateX(-50%);
+                 height: 50px;
+                 width: 50px;
+                 line-height: 50px;
+                 text-align: center;
+                 border-radius: 50%;
+                 background: white;
+                 box-shadow: 0px 2px 5px -2px hsla(0, 0%, 0%, 0.25);
+             }
+            }
+            input[type="radio"]#5:checked + label {
+                background: red;
+                border-color: red;
+            }
+            p {
+                font-weight: 900;
+            }
+            span{
+                font-weight: 800;
+                font-size: 20px;
+            }
+
+
+            @media only screen and (max-width: 700px) {
+                section {
+                    flex-direction: column;
+                }
             }
 
             .full-height {
@@ -58,41 +141,43 @@
                 text-transform: uppercase;
             }
 
+            a{
+                font-weight: 600;
+                font-style: italic;
+                font-size: 15px;
+            }
+
             .m-b-md {
                 margin-bottom: 30px;
             }
         </style>
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+    <h1 class="flex-center">Select a Package Below</h1>
+    <form method="POST" action="#" class="form card-body">
+        @csrf
+        <div class="form-row">
+        <section class="card content">
+            @foreach($packs as $pack)
+            <div>
+                <input type="radio" id="{{$pack->id}}" name="select" value="{{$pack->id}}">
+                <label for="{{$pack->id}}">
+                    <h2>{{$pack->name}}</h2>
+                    <p>{{$pack->description}}</p>
+                    <span>Ksh.{{$pack->amount}}</span>
+                </label>
             </div>
+            @endforeach
+        </section>
         </div>
+        <div class="form-group col-md-12 row mb-3 col-sm-7">
+            <span>Enter Phone Number:</span>
+            <input type="text" name="phone" id="phone" required class="form-control col-sm-4" value="+254" pattern="(+254)(7)[0-9]{8})"/>
+        </div>
+        <div class="form-group form-row mb-3 flex-row">
+            <button type="submit" class="btn btn-lg btn-primary text-primary">Make Purchase</button>
+        </div>
+    </form>
+    <a href="#" class="flex-center content text-success col-md-5">I already have a Voucher Code</a>
     </body>
 </html>
