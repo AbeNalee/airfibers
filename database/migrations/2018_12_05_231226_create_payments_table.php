@@ -15,6 +15,12 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('phone_number');
+            $table->string('package_id');
+            $table->string('transaction_ref')->nullable();
+            $table->string('pesapal_tracking_id')->nullable();
+            $table->string('voucher_code')->nullable()->unique();
+            $table->string('payment_method')->nullable();
             $table->timestamps();
         });
     }

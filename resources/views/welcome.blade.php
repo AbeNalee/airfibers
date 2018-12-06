@@ -154,13 +154,13 @@
     </head>
     <body>
     <h1 class="flex-center">Select a Package Below</h1>
-    <form method="POST" action="#" class="form card-body">
+    <form method="post" action="/payment" class="form card-body">
         @csrf
         <div class="form-row">
         <section class="card content">
             @foreach($packs as $pack)
             <div>
-                <input type="radio" id="{{$pack->id}}" name="select" value="{{$pack->id}}">
+                <input type="radio" id="{{$pack->id}}" name="package" value="{{$pack->id}}">
                 <label for="{{$pack->id}}">
                     <h2>{{$pack->name}}</h2>
                     <p>{{$pack->description}}</p>
@@ -175,7 +175,7 @@
             <input type="text" name="phone" id="phone" required class="form-control col-sm-4" value="+254" pattern="(+254)(7)[0-9]{8})"/>
         </div>
         <div class="form-group form-row mb-3 flex-row">
-            <button type="submit" class="btn btn-lg btn-primary text-primary">Make Purchase</button>
+            <input type="submit" class="btn btn-lg btn-primary text-primary" value="Make Purchase">
         </div>
     </form>
     <a href="#" class="flex-center content text-success col-md-5">I already have a Voucher Code</a>

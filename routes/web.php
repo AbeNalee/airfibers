@@ -12,3 +12,6 @@
 */
 
 Route::get('/', 'PackagesController@index');
+Route::post('/payment', 'PaymentController@create');
+Route::get('donepayment', ['as' => 'paymentsuccess', 'uses'=>'PaymentController@paymentsuccess']);
+Route::post('/complete-payment', 'PaymentController@paymentConfirmation');

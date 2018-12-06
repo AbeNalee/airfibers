@@ -4,11 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Package extends Model
+class Customer extends Model
 {
     protected $fillable = [
-        'name', 'description', 'amount',
+        'name', 'phone_number',
     ];
+
     public function payments()
     {
         return $this->hasMany('App\Payment');
