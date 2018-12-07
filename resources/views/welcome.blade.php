@@ -153,6 +153,11 @@
         </style>
     </head>
     <body>
+    @if (session('status'))
+        <div class="alert alert-success">
+            {{ session('status') }}
+        </div>
+    @endif
     <h1 class="flex-center">Select a Package Below</h1>
     <form method="post" action="/payment" class="form card-body">
         @csrf

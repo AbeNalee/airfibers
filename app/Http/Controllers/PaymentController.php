@@ -54,22 +54,34 @@ class PaymentController extends Controller
     public function paymentConfirmation(Request $request)
     {
         $trackingId = $request->tracking_id;
-        //dd($trackingId);
         $merchant_reference = $request->transactionRef;
+        //dd($merchant_reference);
         $this->checkPaymentStatus($trackingId,$merchant_reference);
     }
 
     public function checkPaymentStatus($trackingId,$merchant_reference)
     {
-        $elements=Pesapal::getMerchantStatus($merchant_reference);
-        //dd($status);
-        $payment = Payment::where('transaction_ref',$trackingId)->first();
+        $status=Pesapal::getMerchantStatus($merchant_reference);
+        //dd($elements);
+        $payment = Payment::where('transaction_ref',$merchant_reference)->first();
+        //dd($payment);
         $payment->update([
-            'status' => $elements[1],
+            'status' => $status,
+            'tracking_id' => $trackingId,
             'payment_method' => 'Pesapal',
         ]);
-        dd($payment);
-        return view();
+        if ($status == 'PENDING')
+        {
+            return redirect('payments.home', compact('payment'));
+        }
+        elseif ($status == 'FAILED' || $status == 'INVALID')
+        {
+            return redirect('/')->with('status', 'Sorry, your payment is'.$status.'. Please, try again');
+        }
+        elseif($status == 'COMPLETE')
+        {
+            return redirect()->action('VoucherController@create', $payment);
+        }
     }
 
     protected function GetClientMac(){
