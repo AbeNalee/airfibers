@@ -13,4 +13,9 @@ class Package extends Model
     {
         return $this->hasMany('App\Payment');
     }
+
+    public function vouchers()
+    {
+        return $this->hasMany('App\Voucher');
+    }
 }

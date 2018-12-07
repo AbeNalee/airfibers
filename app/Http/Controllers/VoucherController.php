@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Package;
 use App\Voucher;
 use Illuminate\Http\Request;
 
@@ -22,9 +23,27 @@ class VoucherController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($payment)
     {
-        //
+        $voucher = new Voucher;
+        $voucher->voucher_code = $this->RandomString();
+        $voucher->package_id = $payment->package_id;
+        $voucher->payment_id = $payment->id;
+        $voucher->duration = $payment->package->duration;
+        $voucher->save();
+
+        return view('payments.voucher')->with('status', 'Transaction has been completed succcessfully. You will receive a voucher code via sms shortly');
+    }
+
+    public function RandomString()
+    {
+        $keySpace = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $pieces = [];
+        $max = mb_strlen($keySpace, '8bit') - 1;
+        for ($i = 0; $i < 7; ++$i) {
+            $pieces []= $keySpace[random_int(0, $max)];
+        }
+        return implode('', $pieces);
     }
 
     /**

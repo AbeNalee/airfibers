@@ -20,4 +20,9 @@ class Payment extends Model
     {
         return $this->belongsTo('App\Customer', 'phone_number', 'phone_number');
     }
+
+    public function voucher()
+    {
+        return $this->hasOne('App\Voucher');
+    }
 }

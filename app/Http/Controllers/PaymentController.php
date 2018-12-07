@@ -78,7 +78,7 @@ class PaymentController extends Controller
         {
             return redirect('/')->with('status', 'Sorry, your payment is'.$status.'. Please, try again');
         }
-        elseif($status == 'COMPLETE')
+        elseif($status == 'COMPLETED')
         {
             return redirect()->action('VoucherController@create', $payment);
         }
