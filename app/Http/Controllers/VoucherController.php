@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Package;
 use App\Voucher;
 use Illuminate\Http\Request;
+use UniFi_API;
 
 class VoucherController extends Controller
 {
@@ -36,6 +37,24 @@ class VoucherController extends Controller
         return redirect('/voucher')->with('status', 'Transaction has been completed succcessfully. You will receive a voucher code via sms shortly');
     }
 
+    public function verify(Request $request)
+    {
+        $voucher = Voucher::where('voucher_code', $request->voucher)->first();
+
+        if ($voucher == null)
+        {
+            return redirect()->with('status', 'The code you have entered is invalid');
+        }
+        else{
+            if($voucher->used == true)
+            {
+                return redirect()->with('status', 'The code you have entered has already been used');
+            }
+            else{
+                //Todo: authenticate via unifi-API using laravel app
+            }
+        }
+    }
     public function RandomString()
     {
         $keySpace = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
