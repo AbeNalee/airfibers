@@ -6,19 +6,11 @@ use App\Package;
 use App\Payment;
 use Pesapal;
 use Illuminate\Http\Request;
+use App\Voucher;
+use AfricasTalking\SDK\AfricasTalking;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -56,7 +48,7 @@ class PaymentController extends Controller
         $trackingId = $request->tracking_id;
         $merchant_reference = $request->transactionRef;
         //dd($merchant_reference);
-        $this->checkPaymentStatus($trackingId,$merchant_reference);
+        return $this->checkPaymentStatus($trackingId,$merchant_reference);
     }
 
     public function checkPaymentStatus($trackingId,$merchant_reference)
@@ -80,8 +72,50 @@ class PaymentController extends Controller
         }
         elseif($status == 'COMPLETED')
         {
-            return redirect()->action('VoucherController@create', $payment);
+            return $this->completed($payment);
         }
+    }
+
+    public function completed($payment)
+    {
+        $voucher = new Voucher;
+        $voucher->voucher_code = $this->RandomString();
+        $voucher->package_id = $payment->package_id;
+        $voucher->payment_id = $payment->id;
+        $voucher->duration = $payment->package->duration;
+        $voucher->save();
+
+        //dd($voucher);
+        $this->sendMessage($voucher);
+
+        return redirect()->route('voucher')->with('status', 'Transaction has been completed successfully. You will receive a voucher code via sms shortly');
+    }
+
+    public function sendMessage($voucher)
+    {
+        $username = config('app.africastalking_username');
+        $key = config('app.africastalking_key');
+        //dd($username);
+
+        $AT = new AfricasTalking($username, $key);
+
+        $sms = $AT->sms();
+
+        return $sms->send([
+            'to'      => $voucher->payment->phone_number,
+            'message' => 'Your AirFibers voucher code is '.$voucher->voucher_code.'. Thank you!',
+        ]);
+    }
+
+    public function RandomString()
+    {
+        $keySpace = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $pieces = [];
+        $max = mb_strlen($keySpace, '8bit') - 1;
+        for ($i = 0; $i < 7; ++$i) {
+            $pieces []= $keySpace[random_int(0, $max)];
+        }
+        return implode('', $pieces);
     }
 
     protected function GetClientMac(){

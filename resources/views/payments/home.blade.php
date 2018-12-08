@@ -154,7 +154,7 @@
 </head>
 <body class="content container">
 <span>Your Payment is being processed. Please wait...</span>
-<form method="post" action="/complete-payment" class="card">
+<form method="post" action="/donepayment" class="card">
     @csrf
     <input hidden name="transactionRef" type="radio" value="{{$payment->transaction_ref}}" checked/>
     <input hidden name="tracking_id" type="radio" value="{{$payment->tracking_id}}" checked/>

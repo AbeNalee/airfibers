@@ -15,7 +15,7 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        //
+        return view('payments.voucher');
     }
 
     /**
@@ -25,6 +25,7 @@ class VoucherController extends Controller
      */
     public function create($payment)
     {
+        dd($payment);
         $voucher = new Voucher;
         $voucher->voucher_code = $this->RandomString();
         $voucher->package_id = $payment->package_id;
@@ -32,7 +33,7 @@ class VoucherController extends Controller
         $voucher->duration = $payment->package->duration;
         $voucher->save();
 
-        return view('payments.voucher')->with('status', 'Transaction has been completed succcessfully. You will receive a voucher code via sms shortly');
+        return redirect('/voucher')->with('status', 'Transaction has been completed succcessfully. You will receive a voucher code via sms shortly');
     }
 
     public function RandomString()

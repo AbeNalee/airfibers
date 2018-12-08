@@ -93,6 +93,10 @@ return [
 
     'fallback_locale' => 'en',
 
+    'africastalking_username' => env('AFRICASTALKING_USERNAME'),
+
+    'africastalking_key' => env('AFRICASTALKING_API_KEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Faker Locale

@@ -183,6 +183,6 @@
             <input type="submit" class="btn btn-lg btn-primary text-primary" value="Make Purchase">
         </div>
     </form>
-    <a href="#" class="flex-center content text-success col-md-5">I already have a Voucher Code</a>
+    <a href="/voucher" class="flex-center content text-success col-md-5">I already have a Voucher Code</a>
     </body>
 </html>
