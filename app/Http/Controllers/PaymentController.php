@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
 use App\Package;
 use App\Payment;
 use Pesapal;
@@ -64,7 +65,7 @@ class PaymentController extends Controller
         ]);
         if ($status == 'PENDING')
         {
-            return redirect('payments.home', compact('payment'));
+            return view('payments.home', compact('payment'));
         }
         elseif ($status == 'FAILED' || $status == 'INVALID')
         {
@@ -78,17 +79,46 @@ class PaymentController extends Controller
 
     public function completed($payment)
     {
-        $voucher = new Voucher;
-        $voucher->voucher_code = $this->RandomString();
-        $voucher->package_id = $payment->package_id;
-        $voucher->payment_id = $payment->id;
-        $voucher->duration = $payment->package->duration;
-        $voucher->save();
+        if (is_null($payment->voucher))
+        {
+            $voucher = new Voucher;
+            $voucher->voucher_code = $this->RandomString();
+            $voucher->package_id = $payment->package_id;
+            $voucher->payment_id = $payment->id;
+            $voucher->duration = $payment->package->duration;
+            $voucher->save();
 
-        //dd($voucher);
-        $this->sendMessage($voucher);
+            //dd($voucher);
+            $this->sendMessage($voucher);
 
-        return redirect('voucher')->with('status', 'Transaction has been completed successfully. You will receive a voucher code via sms shortly');
+            $this->saveCustomer($payment);
+
+            return redirect('voucher')->with('status', 'Transaction has been completed successfully. You will receive a voucher code via sms shortly.');
+        }
+        else{
+            return redirect('voucher')->with('status', 'Transaction has already been processed. A voucher code has been sent to your phone number.');
+        }
+
+    }
+
+    public function saveCustomer($payment)
+    {
+        $user = Customer::where('phone_number', $payment->phone_number);
+        if ($user === null)
+        {
+            $customer = new Customer;
+            $customer->phone_number = $payment->phone_number;
+            $customer->save();
+
+            $payment->update([
+                'customer_id' => $customer->id,
+            ]);
+
+            return $payment;
+        }
+        else{
+            return $payment;
+        }
     }
 
     public function sendMessage($voucher)
