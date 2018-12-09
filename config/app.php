@@ -97,6 +97,16 @@ return [
 
     'africastalking_key' => env('AFRICASTALKING_API_KEY'),
 
+    'unifi_username' => env('UNIFI_USERNAME'),
+
+    'unifi_pass' => env('UNIFI_PASSWORD'),
+
+    'unifi_url' => env('UNIFI_URL'),
+
+    'unifi_site' => env('UNIFI_SITE'),
+
+    'unifi_version' => env('UNIFI_VERSION'),
+
     /*
     |--------------------------------------------------------------------------
     | Faker Locale

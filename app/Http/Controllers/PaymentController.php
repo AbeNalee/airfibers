@@ -88,7 +88,7 @@ class PaymentController extends Controller
         //dd($voucher);
         $this->sendMessage($voucher);
 
-        return redirect()->route('voucher')->with('status', 'Transaction has been completed successfully. You will receive a voucher code via sms shortly');
+        return redirect('voucher')->with('status', 'Transaction has been completed successfully. You will receive a voucher code via sms shortly');
     }
 
     public function sendMessage($voucher)
