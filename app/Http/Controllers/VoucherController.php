@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Package;
 use App\Voucher;
 use Illuminate\Http\Request;
+use Pesapal;
 use UniFi_API;
 use NazmulB\MacAddressPhpLib\MacAddress;
 
@@ -25,73 +26,134 @@ class VoucherController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-//    public function create($payment)
-//    {
-//        dd($payment);
-//        $voucher = new Voucher;
-//        $voucher->voucher_code = $this->RandomString();
-//        $voucher->package_id = $payment->package_id;
-//        $voucher->payment_id = $payment->id;
-//        $voucher->duration = $payment->package->duration;
-//        $voucher->save();
-//
-//        return redirect('/voucher')->with('status', 'Transaction has been completed succcessfully. You will receive a voucher code via sms shortly');
-//    }
+    public function create(Request $request)
+    {
+        $request->validate([
+            'package' => 'required',
+            'phone' => 'required',
+        ]);
+        $package = Package::find($request->package);
+        $payment = new Payment;
+        $payment->package_id = $package->id;
+        $payment->phone_number = $request->phone;
+        $payment->client_mac = $request->mac;
+        $payment->ap_mac = $request->ap;
+        $payment->transaction_ref = Pesapal::random_reference();
+        $payment->amount = $package->amount;
+        $payment->save();
+
+        $details = array(
+            'amount' => $package->amount,
+            'description' => $package->description,
+            'type' => 'MERCHANT',
+            'phonenumber' => $request->phone,
+            'reference' => $payment -> transaction_ref,
+            'height'=>'700px',
+            //'currency' => 'USD'
+        );
+        $iframe = Pesapal::makePayment($details);
+
+        return view('payments.make', compact('iframe'));
+    }
 
     public function verify(Request $request)
     {
-        $voucher = Voucher::where('voucher_code', $request->voucher)->first();
+//        dd($request);
+        $code = $request->voucher;
+        $voucher = Voucher::where('voucher_code', $code)->first();
 
+        $mac = $request->mac;
+        $ap = $request->ap;
+//        dd($client);
         if ($voucher == null)
         {
-            return redirect('/voucher')->with('status', 'The code you have entered is invalid');
+            return view('payments.voucher')->with('status', 'The code you have entered is invalid')
+                ->with(compact('mac'))
+                ->with(compact('ap'));
+//            return back()->withInput()->with('status', 'The code you have entered is invalid');
+        }
+        elseif($voucher->used == true)
+        {
+//            dd($client);
+            return view('payments.voucher')->with('status', 'The code you have entered has already been used')
+                ->with(compact('mac'))
+                ->with(compact('ap'));
+//            return back()->withInput()->with('status', 'The code you have entered has already been used');
         }
         else{
-            if($voucher->used == true)
+            $voucher->used = true;
+            $voucher->save();
+
+            $pack = $voucher->package;
+            $mb = $pack->m_bytes;
+
+            $minutes = $voucher->duration;
+            $hours = $minutes/60;
+
+//            dd($mac);
+            $controller_user = config('app.unifi_username');
+            $controller_pass = config('app.unifi_pass');
+            $controller_url = config('app.unifi_url');
+            $site = config('app.unifi_site');
+            $version = config('app.unifi_version');
+            $unifi = new UniFi_API\Client($controller_user, $controller_pass, $controller_url, $site, $version);
+            $set_debug_mode   = $unifi->set_debug(false);
+            $unifi->login();
+            $auth = $unifi->authorize_guest($mac, $minutes, $ap, $mb);
+
+            if($auth == true)
             {
-                return redirect('/voucher')->with('status', 'The code you have entered has already been used');
+                return redirect('/self-service');
+//                return view('payments.authorized')->with('message', 'You have been granted access! Your plan expires in the next '.$hours.' hours.');
             }
             else{
-                $voucher->update([
-                    'used' => true,
-                ]);
-                $mac = MacAddress::getMacAddress();
-                $minutes = $voucher->duration;
-                $hours = $minutes/60;
-
-                //dd($mac);
-                $controller_user = config('app.unifi_username');
-                $controller_pass = config('app.unifi_pass');
-                $controller_url = config('app.unifi_url');
-                $site = config('app.unifi_site');
-                $version = config('app.unifi_version');
-                //dd($controller_url);
-                $unifi = new UniFi_API\Client($controller_user, $controller_pass, $controller_url, $site, $version);
-                //$set_debug_mode   = $unifi->set_debug(false);
-                $unifi->login();
-                $unifi->authorize_guest($mac, $minutes);
-
-                return view('payments.authorized')->with('message', 'You have been granted access! Your plan expires in the next '.$hours.' hours.');
+                return redirect()->back();
             }
+
         }
     }
     public function getClientMac(){
         $ipAddress=$_SERVER['REMOTE_ADDR'];
-        //dd($ipAddress);
-        $macAddr='';
         $arp=`arp -a $ipAddress`;
         $lines=explode("\n", $arp);
-        dd($lines);
+        $cols = preg_split('/\s+/', trim($lines[3]));
+        return $cols[1];
+    }
 
-        foreach($lines as $line){
-            $cols=preg_split('/\s+/', trim($line));
+    public function service()
+    {
+        $controller_user = config('app.unifi_username');
+        $controller_pass = config('app.unifi_pass');
+        $controller_url = config('app.unifi_url');
+        $site = config('app.unifi_site');
+        $version = config('app.unifi_version');
 
-            if ($cols[0]==$ipAddress){
-                $macAddr=$cols[2];
+        $unifi = new UniFi_API\Client($controller_user, $controller_pass, $controller_url, $site, $version);
+
+        $unifi->login();
+        $all = $unifi->list_guests();
+
+        $mac1 = explode('-', $this->getClientMac());
+        $mac = implode(':', $mac1);
+
+//        $mac = '80:01:84:7a:31:74';
+//        dd($mac);
+
+        $clientele  = array_filter($all, function($obj)use($mac){
+            if($obj->mac == $mac)
+            {
+                return true;
             }
-        }
-        //dd($macAddr);
-        return $macAddr;
+            else{
+                return false;
+            }
+        });
+
+        $clients = [current($clientele)];
+
+//        dd($clients);
+        return view('payments.service', compact('clients'));
+
     }
 
     public function RandomString()

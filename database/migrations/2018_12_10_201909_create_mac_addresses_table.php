@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFieldToPackages extends Migration
+class CreateMacAddressesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class AddFieldToPackages extends Migration
      */
     public function up()
     {
-        Schema::table('packages', function (Blueprint $table) {
-            $table->integer('duration');
-            $table->boolean('quota_based')->default(false);
+        Schema::create('mac_addresses', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('mac');
+            $table->string('ap_mac');
+            $table->timestamps();
         });
     }
 
@@ -26,9 +28,6 @@ class AddFieldToPackages extends Migration
      */
     public function down()
     {
-        Schema::table('packages', function (Blueprint $table) {
-            $table->dropColumn('duration');
-            $table->dropColumn('used');
-        });
+        Schema::dropIfExists('mac_addresses');
     }
 }

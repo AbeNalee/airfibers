@@ -11,6 +11,7 @@
 
         <!-- Styles -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
         <style>
             html, body {
                 background-color: #fff;
@@ -62,13 +63,13 @@
                 position: relative;
             }
             input[type="radio"]:checked + label {
-                background: hsla(150, 75%, 50%, 1);
+                background: #358f6e;
                 color: hsla(215, 0%, 100%, 1);
                 box-shadow: 0px 0px 20px hsla(150, 100%, 50%, 0.75);
             &::after {
                  color: hsla(215, 5%, 25%, 1);
                  font-family: FontAwesome;
-                 border: 2px solid hsla(150, 75%, 45%, 1);
+                 border: #03cbfc;
                  content: "\f00c";
                  font-size: 24px;
                  position: absolute;
@@ -150,39 +151,208 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+
+            .wrap-collabsible {
+                margin-bottom: 1.2rem 0;
+            }
+
+            input[type='checkbox'] {
+                display: none;
+                font-family: FontAwesome;
+            }
+
+            .lbl-toggle {
+                display: block;
+
+                font-weight: bold;
+                font-family: monospace;
+                font-size: 1.2rem;
+                text-transform: uppercase;
+                text-align: center;
+
+                padding: 1rem;
+
+                color: #163a2d;
+                background: #45baa5;
+
+                cursor: pointer;
+
+                border-radius: 7px;
+                transition: all 0.25s ease-out;
+            }
+
+            .lbl-toggle:hover {
+                color: #06100c;
+                background: #358f6e;
+            }
+
+            .lbl-toggle::before {
+                content: ' ';
+                display: inline-block;
+
+                border-top: 5px solid transparent;
+                border-bottom: 5px solid transparent;
+                border-left: 5px solid currentColor;
+                vertical-align: middle;
+                margin-right: .7rem;
+                transform: translateY(-2px);
+
+                transition: transform .2s ease-out;
+            }
+
+            .toggle:checked + .lbl-toggle::before {
+                transform: rotate(90deg) translateX(-3px);
+            }
+
+            .collapsible-content {
+                max-height: 0px;
+                overflow: hidden;
+                transition: max-height .25s ease-in-out;
+            }
+
+            .toggle:checked + .lbl-toggle + .collapsible-content {
+                max-height: 3500px;
+            }
+
+            .toggle:checked + .lbl-toggle {
+                border-bottom-right-radius: 3px;
+                border-bottom-left-radius: 3px;
+            }
+
+            .collapsible-content .content-inner {
+                background: #ffffff;
+                border-bottom-left-radius: 7px;
+                border-bottom-right-radius: 7px;
+                padding: .5rem 1rem;
+            }
         </style>
     </head>
-    <body>
+    <body class="container">
+    <div class="card-body">
     @if (session('status'))
         <div class="alert alert-success">
             {{ session('status') }}
         </div>
     @endif
     <h1 class="flex-center">Select a Package Below</h1>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form method="post" action="/payment" class="form card-body">
         @csrf
         <div class="form-row">
-        <section class="card content">
-            @foreach($packs as $pack)
-            <div>
-                <input type="radio" id="{{$pack->id}}" name="package" value="{{$pack->id}}">
-                <label for="{{$pack->id}}">
-                    <h2>{{$pack->name}}</h2>
-                    <p>{{$pack->description}}</p>
-                    <span>Ksh.{{$pack->amount}}</span>
-                </label>
+            <input type="hidden" name="mac" value="{{$mac}}">
+            <input type="hidden" name="ap" value="{{$ap}}">
+
+            <div class="card content wrap-collabsible">
+                <input id="collapsible" class="toggle" type="checkbox">
+                <label for="collapsible" class="lbl-toggle">Unlimited Packages</label>
+                <div class="collapsible-content">
+                    <div class="content-inner">
+                        <section>
+                        @foreach($unlimited_packs as $pack)
+                            <div>
+                                <input type="radio" id="{{$pack->id}}" name="package" value="{{$pack->id}}">
+                                <label for="{{$pack->id}}">
+                                    <h2>{{$pack->name}}</h2>
+                                    <p>{{$pack->description}}</p>
+                                    <span>Ksh.{{$pack->amount}}</span>
+                                </label>
+                            </div>
+                        @endforeach
+                        </section>
+                    </div>
+                </div>
             </div>
-            @endforeach
-        </section>
+            <div class="card content wrap-collabsible">
+                <input id="collapsible2" class="toggle" type="checkbox">
+                <label for="collapsible2" class="lbl-toggle">Daily Bundles</label>
+                <div class="collapsible-content">
+                    <div class="content-inner">
+                        <section>
+                        @foreach($daily_packs as $pack)
+                            <div>
+                                <input type="radio" id="{{$pack->id}}" name="package" value="{{$pack->id}}">
+                                <label for="{{$pack->id}}">
+                                    <h2>{{$pack->name}}</h2>
+                                    <p>{{$pack->description}}</p>
+                                    <span>Ksh.{{$pack->amount}}</span>
+                                </label>
+                            </div>
+                        @endforeach
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div class="card content wrap-collabsible">
+                <input id="collapsible3" class="toggle" type="checkbox">
+                <label for="collapsible3" class="lbl-toggle">Weekly Bundles</label>
+                <div class="collapsible-content">
+                    <div class="content-inner">
+                        <section>
+                        @foreach($weekly_packs as $pack)
+                            <div>
+                                <input type="radio" id="{{$pack->id}}" name="package" value="{{$pack->id}}">
+                                <label for="{{$pack->id}}">
+                                    <h2>{{$pack->name}}</h2>
+                                    <p>{{$pack->description}}</p>
+                                    <span>Ksh.{{$pack->amount}}</span>
+                                </label>
+                            </div>
+                        @endforeach
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div class="card content wrap-collabsible">
+                <input id="collapsible4" class="toggle" type="checkbox">
+                <label for="collapsible4" class="lbl-toggle">Monthly Bundles</label>
+                <div class="collapsible-content">
+                    <div class="content-inner">
+                        <section>
+                        @foreach($monthly_packs as $pack)
+                            <div>
+                                <input type="radio" id="{{$pack->id}}" name="package" value="{{$pack->id}}">
+                                <label for="{{$pack->id}}">
+                                    <h2>{{$pack->name}}</h2>
+                                    <p>{{$pack->description}}</p>
+                                    <span>Ksh.{{$pack->amount}}</span>
+                                </label>
+                            </div>
+                        @endforeach
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <br>
         </div>
         <div class="form-group col-md-12 row mb-3 col-sm-7">
             <span>Enter Phone Number:</span>
-            <input type="text" name="phone" id="phone" required class="form-control col-sm-4" value="+254" pattern="(+254)(7)[0-9]{8})"/>
+            <input type="tel" name="phone" id="phone" class="form-control col-sm-4" placeholder="+254" required />
         </div>
+        <br>
         <div class="form-group form-row mb-3 flex-row">
-            <input type="submit" class="btn btn-lg btn-primary text-primary" value="Make Purchase">
+            <button type="submit" class="btn btn-lg btn-primary">Make Purchase</button>
         </div>
     </form>
-    <a href="/voucher" class="flex-center content text-success col-md-5">I already have a Voucher Code</a>
+    <div class="card">
+        <form method="post" action="/">
+            @csrf
+            <input type="hidden" name="mac" value="{{$mac}}">
+            <input type="hidden" name="ap" value="{{$ap}}">
+            <input type="submit" class="btn btn-link" value="I already have a Voucher Code">
+        </form>
+    </div>
+    </div>
+    <div class="card-footer">
+        @include('footer')
+    </div>
     </body>
+
 </html>

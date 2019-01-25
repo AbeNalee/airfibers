@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Customer;
 use App\Package;
 use App\Payment;
+use Validator;
 use Pesapal;
 use Illuminate\Http\Request;
 use App\Voucher;
 use AfricasTalking\SDK\AfricasTalking;
+use UniFi_API;
 
 class PaymentController extends Controller
 {
@@ -19,12 +21,18 @@ class PaymentController extends Controller
      */
     public function create(Request $request)
     {
-        //dd($request);
+        $request->validate([
+            'package' => 'required',
+            'phone' => 'required',
+        ]);
+//        dd($request->mac);
         $package = Package::find($request->package);
         //dd($package->id);
         $payment = new Payment;
         $payment->package_id = $package->id;
         $payment->phone_number = $request->phone;
+        $payment->client_mac = $request->mac;
+        $payment->ap_mac = $request->ap;
         $payment->transaction_ref = Pesapal::random_reference();
         $payment->amount = $package->amount;
         $payment->save();
@@ -48,7 +56,7 @@ class PaymentController extends Controller
     {
         $trackingId = $request->tracking_id;
         $merchant_reference = $request->transactionRef;
-        //dd($merchant_reference);
+//        dd($merchant_reference);
         return $this->checkPaymentStatus($trackingId,$merchant_reference);
     }
 
@@ -57,29 +65,80 @@ class PaymentController extends Controller
         $status=Pesapal::getMerchantStatus($merchant_reference);
         //dd($elements);
         $payment = Payment::where('transaction_ref',$merchant_reference)->first();
-        //dd($payment);
+//        dd($status);
         $payment->update([
             'status' => $status,
             'tracking_id' => $trackingId,
             'payment_method' => 'Pesapal',
         ]);
+        $mac = $payment->client_mac;
+        $ap = $payment->ap_mac;
         if ($status == 'PENDING')
         {
+//            dd('You are here');
             return view('payments.home', compact('payment'));
         }
         elseif ($status == 'FAILED' || $status == 'INVALID')
         {
-            return redirect('/')->with('status', 'Sorry, your payment is'.$status.'. Please, try again');
+            return redirect('/')
+                ->with('status', 'Sorry, your payment is'.$status.'. Please, try again')
+                ->with(compact('mac'))
+                ->with(compact('ap'));
         }
-        elseif($status == 'COMPLETED')
+//        elseif($status == 'COMPLETED')
+//        {
+//            dd($payment);
+//            return $this->completed($payment);
+//        }
+        elseif ($status == 'COMPLETED')
         {
-            return $this->completed($payment);
+            return view('payments.choose', compact('payment'));
         }
     }
 
-    public function completed($payment)
+    public function first(Request $request)
     {
-        if (is_null($payment->voucher))
+        $payment = Payment::find($request->payment);
+        $minutes = $payment->package->duration;
+        $hours = $minutes/60;
+        $mb = $payment->package->m_bytes;
+        $mac = $payment->client_mac;
+        $ap = $payment->ap_mac;
+
+        if(is_null($payment->voucher) && is_null($payment->customer_id))
+        {
+            $controller_user = config('app.unifi_username');
+            $controller_pass = config('app.unifi_pass');
+            $controller_url = config('app.unifi_url');
+            $site = config('app.unifi_site');
+            $version = config('app.unifi_version');
+            //dd($controller_url);
+            $unifi = new UniFi_API\Client($controller_user, $controller_pass, $controller_url, $site, $version);
+            $set_debug_mode   = $unifi->set_debug(false);
+            $unifi->login();
+            $auth = $unifi->authorize_guest($mac, $minutes, $ap, $mb);
+
+            if($auth == true)
+            {
+                $this->saveCustomer($payment);
+                return redirect('/self-service');
+//                return view('payments.authorized')->with('message', 'You have been granted access! Your plan expires in the next '.$hours.' hours.');
+            }
+            else{
+                return redirect()->back();
+            }
+        }
+        else{
+            return view('payments.authorized')
+                ->with('message', 'Transaction has already been processed!');
+        }
+    }
+
+    public function second(Request $request)
+    {
+        $payment = Payment::find($request->payment);
+
+        if (is_null($payment->voucher) && is_null($payment->customer_id))
         {
             $voucher = new Voucher;
             $voucher->voucher_code = $this->RandomString();
@@ -88,37 +147,32 @@ class PaymentController extends Controller
             $voucher->duration = $payment->package->duration;
             $voucher->save();
 
-            //dd($voucher);
             $this->sendMessage($voucher);
 
             $this->saveCustomer($payment);
 
-            return redirect('voucher')->with('status', 'Transaction has been completed successfully. You will receive a voucher code via sms shortly.');
+            return view('payments.authorized')
+                ->with('message', 'You will receive a voucher code via sms shortly. Connect. Explore. Experience!');
         }
         else{
-            return redirect('voucher')->with('status', 'Transaction has already been processed. A voucher code has been sent to your phone number.');
+            return view('payments.authorized')
+                ->with('message', 'Transaction has already been processed!');
         }
 
     }
 
     public function saveCustomer($payment)
     {
-        $user = Customer::where('phone_number', $payment->phone_number);
-        if ($user === null)
-        {
-            $customer = new Customer;
-            $customer->phone_number = $payment->phone_number;
-            $customer->save();
+        $customer = Customer::firstOrCreate([
+            'phone_number' => $payment->phone_number,
+        ],[
+            'name' => '',
+        ]);
 
-            $payment->update([
-                'customer_id' => $customer->id,
-            ]);
+        $pay = Payment::find($payment->id);
+        $pay->customer_id = $customer->id;
+        $pay->save();
 
-            return $payment;
-        }
-        else{
-            return $payment;
-        }
     }
 
     public function sendMessage($voucher)
@@ -133,7 +187,7 @@ class PaymentController extends Controller
 
         return $sms->send([
             'to'      => $voucher->payment->phone_number,
-            'message' => 'Your AirFibers voucher code is '.$voucher->voucher_code.'. Thank you!',
+            'message' => 'Your AirFibers voucher code is '.$voucher->voucher_code.'. Connect. Explore. Experience!',
         ]);
     }
 
@@ -142,7 +196,7 @@ class PaymentController extends Controller
         $keySpace = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $pieces = [];
         $max = mb_strlen($keySpace, '8bit') - 1;
-        for ($i = 0; $i < 7; ++$i) {
+        for ($i = 0; $i < 9; ++$i) {
             $pieces []= $keySpace[random_int(0, $max)];
         }
         return implode('', $pieces);
@@ -178,8 +232,10 @@ class PaymentController extends Controller
     {
         $trackingid = $request->input('tracking_id');
         $ref = $request->input('merchant_reference');
+//        dd($ref);
 
         $payment = Payment::where('transaction_ref',$ref)->first();
+//        dd($payment);
         $payment->update([
             'tracking_id' => $trackingid,
             'status' => 'PENDING',

@@ -91,6 +91,7 @@
         }
         p {
             font-weight: 900;
+            font-size: 15px;
         }
         span{
             font-weight: 800;
@@ -160,31 +161,16 @@
             position:absolute;
             bottom:0;
             width:100%;
-            height:60px;   /* Height of the footer */
-            background:#6cf;
+            height:60px;
         }
     </style>
 </head>
-<body id="container">
-@isset($status)
-    <div class="alert alert-success">
-        {{ $status}}
-    </div>
-@endisset
-<h1 class="flex-center">Enter Your Voucher code below</h1>
-<form method="post" action="/voucher" class="form card-body">
-    @csrf
-    <div class="form-group col-md-12 row mb-3 col-sm-7">
-        <input type="text" name="voucher" id="voucher" required class="form-control col-sm-4" placeholder="Voucher code goes here"/>
-    </div>
-    <input type="hidden" name="mac" value="{{$mac}}">
-    <input type="hidden" name="ap" value="{{$ap}}">
-    <div class="form-group form-row mb-3 flex-row">
-        <input type="submit" class="btn btn-lg btn-primary text-primary" value="Gain Access">
-    </div>
-</form>
-<div id="footer">
-    @include('footer')
+<body class="container">
+<div class="card">
+    <span>
+        You have been logged in to the agent dashboard. Here you can access all of our agent features.
+    </span>
 </div>
+
 </body>
 </html>

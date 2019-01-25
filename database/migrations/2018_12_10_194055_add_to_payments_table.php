@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFieldToPackages extends Migration
+class AddToPaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddFieldToPackages extends Migration
      */
     public function up()
     {
-        Schema::table('packages', function (Blueprint $table) {
-            $table->integer('duration');
-            $table->boolean('quota_based')->default(false);
+        Schema::table('payments', function (Blueprint $table) {
+            $table->string('client_mac')->nullable();
+            $table->string('ap_mac')->nullable();
         });
     }
 
@@ -26,9 +26,9 @@ class AddFieldToPackages extends Migration
      */
     public function down()
     {
-        Schema::table('packages', function (Blueprint $table) {
-            $table->dropColumn('duration');
-            $table->dropColumn('used');
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn('client_mac');
+            $table->dropColumn('ap_mac');
         });
     }
 }

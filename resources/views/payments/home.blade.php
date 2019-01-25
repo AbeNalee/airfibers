@@ -11,6 +11,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <style>
         html, body {
             background-color: #fff;
@@ -150,17 +151,32 @@
         .m-b-md {
             margin-bottom: 30px;
         }
+
+        #container {
+            min-height:100%;
+            position:relative;
+            height:100%;
+        }
+        #footer {
+            position:absolute;
+            bottom:0;
+            width:100%;
+            height:60px;
+        }
     </style>
 </head>
-<body class="content container">
+<body id="container" class="content container">
 <span>Your Payment is being processed. Please wait...</span>
-<form method="post" action="/donepayment" class="card">
+<form method="post" action="/donepayment" class="card-body">
     @csrf
     <input hidden name="transactionRef" type="radio" value="{{$payment->transaction_ref}}" checked/>
     <input hidden name="tracking_id" type="radio" value="{{$payment->tracking_id}}" checked/>
 
-    <input id="validatebtn" name="validated" type="submit" class="btn btn-primary" value="Click here to complete"/>
+    <input id="validatebtn" name="validated" type="submit" class="btn btn-primary btn-lg" value="Click here to complete"/>
 
 </form>
+<div id="footer">
+    @include('footer')
+</div>
 </body>
 </html>

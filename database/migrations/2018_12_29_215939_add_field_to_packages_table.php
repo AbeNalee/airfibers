@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFieldToPackages extends Migration
+class AddFieldToPackagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,8 @@ class AddFieldToPackages extends Migration
     public function up()
     {
         Schema::table('packages', function (Blueprint $table) {
-            $table->integer('duration');
-            $table->boolean('quota_based')->default(false);
+            $table->integer('m_bytes')->nullable();
+            $table->string('validity')->nullable();
         });
     }
 
@@ -27,8 +27,9 @@ class AddFieldToPackages extends Migration
     public function down()
     {
         Schema::table('packages', function (Blueprint $table) {
-            $table->dropColumn('duration');
-            $table->dropColumn('used');
+            $table->dropColumn('m_bytes');
+            $table->dropColumn('validity');
+
         });
     }
 }

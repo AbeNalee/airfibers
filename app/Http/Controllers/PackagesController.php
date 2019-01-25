@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\MacAddress;
 use App\Package;
 use Illuminate\Http\Request;
+use function Sodium\compare;
 
 class PackagesController extends Controller
 {
@@ -14,6 +16,8 @@ class PackagesController extends Controller
      */
     public function index()
     {
+        //dd($request->query('ap'));
+
         $packs = Package::all();
         return view('welcome')->with('packs', $packs);
     }
@@ -28,6 +32,21 @@ class PackagesController extends Controller
         //
     }
 
+    public function voucher(Request $request)
+    {
+        $mac = $request->mac;
+        $ap = $request->ap;
+//        dd($ap);
+        $address = new MacAddress;
+        $address->mac = $mac;
+        $address->ap_mac = $ap;
+        $address->save();
+
+//        dd($request->ap);
+        return view('payments.voucher')->with(compact('mac'))
+            ->with(compact('ap'));
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -36,7 +55,22 @@ class PackagesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $mac = $request->query('id');
+        $ap = $request->query('ap');
+
+//        $mac = '1';
+//        $ap = '2';
+        $unlimited_packs = Package::where('quota_based', false)->get();
+        $daily_packs = Package::where('quota_based', true)->where('duration', 1440)->get();
+        $weekly_packs = Package::where('quota_based', true)->where('duration', 10080)->get();
+        $monthly_packs = Package::where('quota_based', true)->where('duration', 43200)->get();
+        return view('welcome')
+            ->with(compact('unlimited_packs'))
+            ->with(compact('daily_packs'))
+            ->with(compact('weekly_packs'))
+            ->with(compact('monthly_packs'))
+            ->with(compact('mac'))
+            ->with(compact('ap'));
     }
 
     /**
