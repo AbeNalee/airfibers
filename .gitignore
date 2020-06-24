@@ -12,6 +12,5 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /database/old_migrations
-.env
 .phpunit.result.cache
 todo.md
