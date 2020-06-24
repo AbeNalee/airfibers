@@ -107,6 +107,21 @@ return [
 
     'unifi_version' => env('UNIFI_VERSION'),
 
+    'mpesa_shortcode' => env('MPESA_SHORTCODE'),
+
+    'mpesa_till' => env('MPESA_TILL'),
+
+    'mpesa_passkey' => env('MPESA_PASSKEY'),
+
+    'mpesa_callback' => env('MPESA_CALLBACK_ROUTE'),
+
+    'mpesa_k' => env('MPESA_K'),
+
+    'plex_username' => env('PLEX_USERNAME'),
+
+    'plex_password' => env('PLEX_PASSWORD'),
+
+    'plex_version' => env('PLEX_VERSION'),
     /*
     |--------------------------------------------------------------------------
     | Faker Locale
@@ -134,6 +149,15 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
+
+    'debug_blacklist' => [
+        '_COOKIE' => array_keys($_COOKIE),
+        '_SERVER' => array_keys($_SERVER),
+        '_ENV' => array_keys($_ENV),
+        '_POST' => [
+            'password',
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -187,6 +211,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Knox\Pesapal\PesapalServiceProvider::class,
+        \Safaricom\Mpesa\MpesaServiceProvider::class,
 
     ],
 
@@ -237,6 +262,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Pesapal' => Knox\Pesapal\Facades\Pesapal::class,
+        'Mpesa'=> \Safaricom\Mpesa\MpesaServiceProvider::class,
 
     ],
 

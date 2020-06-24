@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e6c770e87ef8144b7552ef0a23b7d46",
+    "content-hash": "db882d5a93c962669d09c223682cd83a",
     "packages": [
         {
             "name": "africastalking/africastalking",
@@ -464,6 +464,42 @@
                 "trusted proxy"
             ],
             "time": "2018-02-07T20:20:57+00:00"
+        },
+        {
+            "name": "geoffreyrose/us-holidays",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geoffreyrose/us-holidays.git",
+                "reference": "6df02a5cc09fbb69dde1d34bc4da597c3466462a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geoffreyrose/us-holidays/zipball/6df02a5cc09fbb69dde1d34bc4da597c3466462a",
+                "reference": "6df02a5cc09fbb69dde1d34bc4da597c3466462a",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "^1.22"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "USHolidays\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "US Holidays Wrapper for the Carbon DateTime Library.",
+            "keywords": [
+                "Bank",
+                "carbon",
+                "holiday",
+                "holidays"
+            ],
+            "time": "2018-02-18T04:07:07+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1813,6 +1849,56 @@
             "time": "2016-01-26T13:27:02+00:00"
         },
         {
+            "name": "predis/predis",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nrk/predis.git",
+                "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nrk/predis/zipball/f0210e38881631afeafb56ab43405a92cafd9fd1",
+                "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "suggest": {
+                "ext-curl": "Allows access to Webdis when paired with phpiredis",
+                "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Predis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniele Alessandri",
+                    "email": "suppakilla@gmail.com",
+                    "homepage": "http://clorophilla.net"
+                }
+            ],
+            "description": "Flexible and feature-complete Redis client for PHP and HHVM",
+            "homepage": "http://github.com/nrk/predis",
+            "keywords": [
+                "nosql",
+                "predis",
+                "redis"
+            ],
+            "time": "2016-06-16T16:22:20+00:00"
+        },
+        {
             "name": "psr/container",
             "version": "1.0.0",
             "source": {
@@ -2201,6 +2287,113 @@
                 "uuid"
             ],
             "time": "2018-07-19T23:38:55+00:00"
+        },
+        {
+            "name": "safaricom/mpesa",
+            "version": "1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/safaricom/mpesa-php-sdk.git",
+                "reference": "c66895dcdec8df1f496e017708c557fc252340c5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/safaricom/mpesa-php-sdk/zipball/c66895dcdec8df1f496e017708c557fc252340c5",
+                "reference": "c66895dcdec8df1f496e017708c557fc252340c5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "symfony/dotenv": "^4.3@dev"
+            },
+            "type": "package",
+            "autoload": {
+                "psr-4": {
+                    "Safaricom\\Mpesa\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "mit"
+            ],
+            "authors": [
+                {
+                    "name": "Moses Nandwa",
+                    "email": "mnandwa@safaricom.co.ke"
+                }
+            ],
+            "description": "A PHP package for Mpesa API",
+            "time": "2019-01-06T16:01:21+00:00"
+        },
+        {
+            "name": "smodav/mpesa",
+            "version": "v4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SmoDav/mpesa.git",
+                "reference": "1d820b2dbb5cfa2133e228135629fb92a9f21112"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SmoDav/mpesa/zipball/1d820b2dbb5cfa2133e228135629fb92a9f21112",
+                "reference": "1d820b2dbb5cfa2133e228135629fb92a9f21112",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "illuminate/support": "^5.0",
+                "nesbot/carbon": "~1.21",
+                "php": ">=5.6.0",
+                "predis/predis": "^1.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "dev-master",
+                "phpunit/phpunit": "~5.7|~6.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SmoDav\\Mpesa\\Laravel\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "STK": "SmoDav\\Mpesa\\Laravel\\Facades\\STK",
+                        "Simulate": "SmoDav\\Mpesa\\Laravel\\Facades\\Simulate",
+                        "Registrar": "SmoDav\\Mpesa\\Laravel\\Facades\\Registrar",
+                        "Identity": "SmoDav\\Mpesa\\Laravel\\Facades\\Identity"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Mpesa/Support/helpers.php",
+                    "src/Mpesa/Support/constants.php"
+                ],
+                "psr-4": {
+                    "SmoDav\\Mpesa\\": "src/Mpesa/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "SmoDav",
+                    "email": "smodavprivate@gmail.com"
+                }
+            ],
+            "description": "M-Pesa API implementation",
+            "keywords": [
+                "api",
+                "laravel",
+                "mpesa",
+                "safaricom",
+                "transactions"
+            ],
+            "time": "2018-08-27T11:37:26+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -5133,6 +5326,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "geoffreyrose/us-holidays": 20,
         "nazmulb/mac-address-php": 20
     },
     "prefer-stable": true,

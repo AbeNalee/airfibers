@@ -14,4 +14,14 @@ class Customer extends Model
     {
         return $this->hasMany('App\Payment');
     }
+
+    public function device()
+    {
+        return $this->hasMany('App\MacAddress');
+    }
+
+    public function vouchers()
+    {
+        return $this->hasManyThrough('App\Voucher', 'App\MacAddress', 'customer_id', 'used_by', 'id', 'mac');
+    }
 }

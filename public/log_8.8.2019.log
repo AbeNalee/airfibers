@@ -1,0 +1,9 @@
+{
+            "ResponseCode": "0",
+            "ResponseDescription":"The service request has been accepted successsfully",
+            "MerchantRequestID":"25639-16230439-1",
+            "CheckoutRequestID":"ws_CO_MER_30072019165520712",
+            "ResultCode": "0",
+            "ResultDesc":"The service request is processed successfully."
+        }
+        

@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     protected $fillable = [
-        'phone_number', 'package_id', 'transaction_ref',
-        'pesapal_tracking_id','voucher_code', 'payment_method', 'status', 'tracking_id','merchant_ref','amount',
+        'phone_number', 'package_id', 'checkout_req_id', 'ap_mac', 'granted','customer_id', 'payment_method',
+        'status', 'client_mac','merchant_req_id','amount', 'mpesa_id'
     ];
 
     public function package()
@@ -24,5 +24,15 @@ class Payment extends Model
     public function voucher()
     {
         return $this->hasOne('App\Voucher');
+    }
+
+    public function mpesa()
+    {
+        return $this->hasOne('App\Mpesa');
+    }
+
+    public function AccessPoint()
+    {
+        return $this->belongsTo('App\AccessPoint', 'ap_mac', 'mac_address');
     }
 }

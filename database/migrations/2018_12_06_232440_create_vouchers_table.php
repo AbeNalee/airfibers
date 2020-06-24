@@ -17,8 +17,10 @@ class CreateVouchersTable extends Migration
             $table->increments('id');
             $table->string('voucher_code')->unique();
             $table->string('package_id');
-            $table->string('payment_id');
+            $table->string('payment_id')->nullable();
             $table->integer('duration');
+            $table->boolean('used')->default(false);
+            $table->string('user_id')->nullable();
             $table->timestamps();
         });
     }

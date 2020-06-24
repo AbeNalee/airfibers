@@ -18,6 +18,12 @@ class CreatePackagesTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->integer('amount');
+            $table->integer('duration');
+            $table->boolean('quota_based')->default(false);
+            $table->integer('up')->nullable();
+            $table->integer('down')->nullable();
+            $table->integer('m_bytes')->nullable();
+            $table->string('validity')->nullable();
             $table->timestamps();
         });
     }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Package extends Model
 {
     protected $fillable = [
-        'name', 'description', 'amount', 'validity', 'm_bytes',
+        'name', 'description', 'amount', 'validity', 'm_bytes', 'up', 'down',
     ];
     public function payments()
     {
